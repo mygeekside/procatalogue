@@ -1,87 +1,71 @@
-# Active Context: Next.js Starter Template
+# Active Context: ProCatalogue App
 
 ## Current State
 
-**Template Status**: ✅ Ready for development
+**App Status**: ✅ Fully functional Product Catalogue + Ordering + Inventory Management App
 
-The template is a clean Next.js 16 starter with TypeScript and Tailwind CSS 4. It's ready for AI-assisted expansion to build any type of application.
+The app is a complete procurement platform built on Next.js 16 with SQLite database.
 
 ## Recently Completed
 
-- [x] Base Next.js 16 setup with App Router
-- [x] TypeScript configuration with strict mode
-- [x] Tailwind CSS 4 integration
-- [x] ESLint configuration
-- [x] Memory bank documentation
-- [x] Recipe system for common features
+- [x] Full product catalogue with public browsing (prices hidden for guests)
+- [x] 3-step business registration with admin approval workflow
+- [x] Customer portal: cart, orders, messaging, inventory management
+- [x] Admin dashboard: clean UI with stats, quick actions, recent activity
+- [x] Admin product management (add/edit/toggle stock/hide products)
+- [x] Admin order review with editable quantities/prices + invoice generation
+- [x] Admin registration approval (approve/reject customers)
+- [x] Delivery confirmation flow with auto inventory update
+- [x] Customer inventory tracking with low stock alerts
+- [x] SQLite database via @libsql/client with full schema
+- [x] JWT authentication with role-based access control
+- [x] 12 sample products across 4 categories seeded
+- [x] Demo admin: admin@example.com / admin123
 
 ## Current Structure
 
 | File/Directory | Purpose | Status |
 |----------------|---------|--------|
-| `src/app/page.tsx` | Home page | ✅ Ready |
-| `src/app/layout.tsx` | Root layout | ✅ Ready |
-| `src/app/globals.css` | Global styles | ✅ Ready |
-| `.kilocode/` | AI context & recipes | ✅ Ready |
+| `src/app/page.tsx` | Landing page with hero, features, CTA | ✅ Done |
+| `src/app/catalogue/` | Public product catalogue with search/filter | ✅ Done |
+| `src/app/login/` | Login page | ✅ Done |
+| `src/app/register/` | 3-step business registration | ✅ Done |
+| `src/app/pending-approval/` | Waiting for admin approval page | ✅ Done |
+| `src/app/portal/` | Customer portal (dashboard, cart, orders, inventory) | ✅ Done |
+| `src/app/admin/` | Admin panel (dashboard, products, orders, registrations) | ✅ Done |
+| `src/app/api/` | All API routes | ✅ Done |
+| `src/db/` | Database schema, migrations, seed data | ✅ Done |
+| `src/lib/` | Auth utilities, helper functions | ✅ Done |
+| `src/components/` | UI components (Button, Card, Badge, Input, etc.) | ✅ Done |
+| `data/app.db` | SQLite database file | ✅ Created |
 
-## Current Focus
+## User Roles & Access
 
-The template is ready. Next steps depend on user requirements:
+| Role | Access |
+|------|--------|
+| Public (no login) | Browse catalogue, view products, mark interest |
+| Pending Customer | Browse catalogue only |
+| Approved Customer | Full portal: prices, cart, orders, inventory |
+| Admin | Full admin panel + all customer features |
 
-1. What type of application to build
-2. What features are needed
-3. Design/branding preferences
+## Demo Credentials
 
-## Quick Start Guide
+- **Admin**: admin@example.com / admin123
+- **Register** a new business at `/register` to test customer flow
 
-### To add a new page:
+## Key Workflows
 
-Create a file at `src/app/[route]/page.tsx`:
-```tsx
-export default function NewPage() {
-  return <div>New page content</div>;
-}
-```
-
-### To add components:
-
-Create `src/components/` directory and add components:
-```tsx
-// src/components/ui/Button.tsx
-export function Button({ children }: { children: React.ReactNode }) {
-  return <button className="px-4 py-2 bg-blue-600 text-white rounded">{children}</button>;
-}
-```
-
-### To add a database:
-
-Follow `.kilocode/recipes/add-database.md`
-
-### To add API routes:
-
-Create `src/app/api/[route]/route.ts`:
-```tsx
-import { NextResponse } from "next/server";
-
-export async function GET() {
-  return NextResponse.json({ message: "Hello" });
-}
-```
-
-## Available Recipes
-
-| Recipe | File | Use Case |
-|--------|------|----------|
-| Add Database | `.kilocode/recipes/add-database.md` | Data persistence with Drizzle + SQLite |
-
-## Pending Improvements
-
-- [ ] Add more recipes (auth, email, etc.)
-- [ ] Add example components
-- [ ] Add testing setup recipe
+1. **Public browsing** → `/catalogue` (no prices shown)
+2. **Register** → `/register` (3-step form, admin approval required)
+3. **Admin approves** → `/admin/registrations`
+4. **Customer orders** → `/portal/cart` → submit order
+5. **Admin reviews** → `/admin/orders/[id]` (edit qty/price, generate invoice)
+6. **Customer confirms delivery** → `/portal/orders/[id]`
+7. **Inventory auto-updates** after delivery confirmation
 
 ## Session History
 
 | Date | Changes |
 |------|---------|
-| Initial | Template created with base setup |
+| 2024 | Initial template created |
+| 2024 | Complete ProCatalogue app built from scratch |
