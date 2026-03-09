@@ -92,6 +92,8 @@ export const orders = sqliteTable("orders", {
   }).notNull().default("pending"),
   notes: text("notes"),
   adminNotes: text("admin_notes"),
+  deliveryCode: text("delivery_code"),
+  deliveryCodeGeneratedAt: text("delivery_code_generated_at"),
   totalAmount: real("total_amount").default(0),
   createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
   updatedAt: text("updated_at").notNull().default(sql`(datetime('now'))`),

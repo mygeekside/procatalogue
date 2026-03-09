@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Send, CheckCircle, Package, FileText } from "lucide-react";
+import { ArrowLeft, Send, CheckCircle, Package, FileText, Key } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,6 +29,8 @@ interface Order {
   adminNotes: string | null;
   totalAmount: number | null;
   createdAt: string;
+  deliveryCode: string | null;
+  deliveryCodeGeneratedAt: string | null;
 }
 
 interface Message {
@@ -50,6 +52,7 @@ export default function CustomerOrderDetailPage() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  const [generatingCode, setGeneratingCode] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const fetchOrder = async () => {
@@ -101,6 +104,17 @@ export default function CustomerOrderDetailPage() {
     setConfirming(false);
   };
 
+  const handleGenerateCode = async () => {
+    setGeneratingCode(true);
+    const res = await fetch(`/api/orders/${orderId}/delivery-code`, {
+      method: "POST",
+    });
+    if (res.ok) {
+      fetchOrder();
+    }
+    setGeneratingCode(false);
+  };
+
   if (loading) {
     return <div className="text-center py-20 text-gray-400">Loading...</div>;
   }
@@ -142,17 +156,70 @@ export default function CustomerOrderDetailPage() {
           </div>
           <p className="text-gray-500 text-sm">{formatDate(order.createdAt)}</p>
         </div>
-        {(order.status === "invoiced" || order.status === "delivered") && (
-          <Button
-            onClick={handleConfirmDelivery}
-            disabled={confirming}
-            className="bg-green-600 hover:bg-green-700"
-          >
-            <CheckCircle className="w-4 h-4" />
-            {confirming ? "Confirming..." : "Confirm Delivery"}
-          </Button>
-        )}
       </div>
+
+      {/* Delivery Code Section */}
+      {order.status === "invoiced" && (
+        <Card className="mb-6 border-blue-200 bg-blue-50">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Key className="w-5 h-5 text-blue-600" />
+              Delivery Verification Code
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {order.deliveryCode ? (
+              <div className="text-center py-2">
+                <p className="text-sm text-gray-600 mb-2">
+                  Share this code with the delivery person to verify receipt of your order:
+                </p>
+                <div className="text-4xl font-bold tracking-wider text-blue-700 font-mono">
+                  {order.deliveryCode}
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  Generated on {formatDate(order.deliveryCodeGeneratedAt!)}
+                </p>
+              </div>
+            ) : (
+              <div className="text-center py-2">
+                <p className="text-sm text-gray-600 mb-3">
+                  Generate a delivery verification code to share with the delivery person.
+                </p>
+                <Button
+                  onClick={handleGenerateCode}
+                  disabled={generatingCode}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  <Key className="w-4 h-4" />
+                  {generatingCode ? "Generating..." : "Generate Delivery Code"}
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Completed order - show code if exists */}
+      {(order.status === "delivered" || order.status === "completed") && order.deliveryCode && (
+        <Card className="mb-6 border-green-200 bg-green-50">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-green-600" />
+              Delivery Verified
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center py-2">
+              <p className="text-sm text-gray-600 mb-2">
+                This order was delivered with verification code:
+              </p>
+              <div className="text-4xl font-bold tracking-wider text-green-700 font-mono">
+                {order.deliveryCode}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Status Timeline */}
       <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">

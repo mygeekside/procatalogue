@@ -28,6 +28,8 @@ export async function GET(
         businessName: users.businessName,
         contactPerson: users.contactPerson,
         email: users.email,
+        deliveryCode: orders.deliveryCode,
+        deliveryCodeGeneratedAt: orders.deliveryCodeGeneratedAt,
       })
       .from(orders)
       .innerJoin(users, eq(orders.userId, users.id))

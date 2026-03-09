@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Send, FileText, CheckCircle, Package } from "lucide-react";
+import { ArrowLeft, Send, FileText, CheckCircle, Package, Key } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -36,6 +36,8 @@ interface Order {
   businessName: string | null;
   contactPerson: string | null;
   email: string;
+  deliveryCode: string | null;
+  deliveryCodeGeneratedAt: string | null;
 }
 
 interface Message {
@@ -58,6 +60,9 @@ export default function AdminOrderDetailPage() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [deliveryCode, setDeliveryCode] = useState("");
+  const [verifyingCode, setVerifyingCode] = useState(false);
+  const [codeError, setCodeError] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const fetchOrder = async () => {
@@ -133,6 +138,30 @@ export default function AdminOrderDetailPage() {
     fetchOrder();
   };
 
+  const handleVerifyDelivery = async () => {
+    if (!deliveryCode.trim()) {
+      setCodeError("Please enter the delivery code");
+      return;
+    }
+    setVerifyingCode(true);
+    setCodeError("");
+    
+    const res = await fetch(`/api/admin/orders/${orderId}/verify-delivery`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ deliveryCode }),
+    });
+    
+    if (res.ok) {
+      fetchOrder();
+      setDeliveryCode("");
+    } else {
+      const data = await res.json();
+      setCodeError(data.error || "Invalid delivery code");
+    }
+    setVerifyingCode(false);
+  };
+
   if (loading) {
     return <div className="text-center py-20 text-gray-400">Loading...</div>;
   }
@@ -191,9 +220,47 @@ export default function AdminOrderDetailPage() {
             </Button>
           )}
           {order.status === "invoiced" && (
-            <Button onClick={() => handleUpdateStatus("delivered")} className="bg-blue-600">
-              Mark Delivered
-            </Button>
+            <div className="space-y-4">
+              {!order.deliveryCode ? (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
+                  <p className="text-yellow-800 text-sm">
+                    Waiting for customer to generate delivery code...
+                  </p>
+                  <p className="text-yellow-600 text-xs mt-1">
+                    Customer must generate a code from their dashboard before delivery can be confirmed.
+                  </p>
+                </div>
+              ) : (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <p className="text-blue-800 text-sm mb-3 text-center font-medium">
+                    Customer has generated a delivery code. Enter it below to confirm delivery:
+                  </p>
+                  <div className="flex gap-2 max-w-md mx-auto">
+                    <Input
+                      value={deliveryCode}
+                      onChange={(e) => {
+                        setDeliveryCode(e.target.value.toUpperCase());
+                        setCodeError("");
+                      }}
+                      placeholder="Enter 6-digit code"
+                      maxLength={6}
+                      className="text-center text-lg tracking-widest font-mono uppercase"
+                    />
+                    <Button
+                      onClick={handleVerifyDelivery}
+                      disabled={verifyingCode || deliveryCode.length !== 6}
+                      className="bg-green-600 hover:bg-green-700"
+                    >
+                      <CheckCircle className="w-4 h-4" />
+                      {verifyingCode ? "Verifying..." : "Verify & Confirm"}
+                    </Button>
+                  </div>
+                  {codeError && (
+                    <p className="text-red-600 text-sm mt-2 text-center">{codeError}</p>
+                  )}
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>
