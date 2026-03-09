@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Plus, Edit, Eye, EyeOff, Package, AlertTriangle, ToggleLeft, ToggleRight } from "lucide-react";
+import { Plus, Edit, Eye, EyeOff, Package, AlertTriangle, ToggleLeft, ToggleRight, Upload, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -85,12 +85,26 @@ export default function AdminProductsPage() {
           <h1 className="text-3xl font-bold text-gray-900">Products</h1>
           <p className="text-gray-500 mt-1">{products.length} products total</p>
         </div>
-        <Link href="/admin/products/new">
-          <Button>
-            <Plus className="w-4 h-4" />
-            Add Product
-          </Button>
-        </Link>
+        <div className="flex gap-2">
+          <Link href="/admin/products/images">
+            <Button variant="outline">
+              <Image className="w-4 h-4" />
+              Images
+            </Button>
+          </Link>
+          <Link href="/admin/products/import">
+            <Button variant="outline">
+              <Upload className="w-4 h-4" />
+              Import CSV
+            </Button>
+          </Link>
+          <Link href="/admin/products/new">
+            <Button>
+              <Plus className="w-4 h-4" />
+              Add Product
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Search & Filters */}

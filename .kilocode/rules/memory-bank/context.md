@@ -21,6 +21,8 @@ The app is a complete procurement platform built on Next.js 16 with SQLite datab
 - [x] JWT authentication with role-based access control
 - [x] 12 sample products across 4 categories seeded
 - [x] Demo admin: admin@example.com / admin123
+- [x] **Bulk CSV import** for 10,000+ SKUs at `/admin/products/import`
+- [x] **Image upload manager** for bulk product images at `/admin/products/images`
 
 ## Current Structure
 
@@ -33,6 +35,9 @@ The app is a complete procurement platform built on Next.js 16 with SQLite datab
 | `src/app/pending-approval/` | Waiting for admin approval page | ✅ Done |
 | `src/app/portal/` | Customer portal (dashboard, cart, orders, inventory) | ✅ Done |
 | `src/app/admin/` | Admin panel (dashboard, products, orders, registrations) | ✅ Done |
+| `src/app/admin/products/` | Admin product management (add/edit/import/images) | ✅ Done |
+| `src/app/admin/products/import/` | Bulk CSV import page | ✅ Done |
+| `src/app/admin/products/images/` | Image upload manager | ✅ Done |
 | `src/app/api/` | All API routes | ✅ Done |
 | `src/db/` | Database schema, migrations, seed data | ✅ Done |
 | `src/lib/` | Auth utilities, helper functions | ✅ Done |
@@ -62,6 +67,8 @@ The app is a complete procurement platform built on Next.js 16 with SQLite datab
 5. **Admin reviews** → `/admin/orders/[id]` (edit qty/price, generate invoice)
 6. **Customer confirms delivery** → `/portal/orders/[id]`
 7. **Inventory auto-updates** after delivery confirmation
+8. **Bulk import** → `/admin/products/import` (CSV upload for 10k+ SKUs)
+9. **Image management** → `/admin/products/images` (upload product images)
 
 ## Session History
 
@@ -69,3 +76,5 @@ The app is a complete procurement platform built on Next.js 16 with SQLite datab
 |------|---------|
 | 2024 | Initial template created |
 | 2024 | Complete ProCatalogue app built from scratch |
+| 2025-03 | Added bulk CSV import for 10,000+ SKUs |
+| 2025-03 | Added image upload manager for product images |
